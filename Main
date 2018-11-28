@@ -8,8 +8,7 @@ score = 0
 #         DEFINITIONS          #
 
 def player_attack_function():
-	global mhp
-	global score
+	global mhp, score
 	mhp = mhp - 5
 	print("The", monster, "now has", mhp, "HP remaining!")
 	if mhp < 1: # Checks if monster is alive first.
@@ -25,6 +24,9 @@ def player_attack_function():
 				player_attack_function()
 			elif(action == "run"):
 				run_function()
+			elif(action != "atk" and action != "run"):
+				print("Invalid action. Please retry.")
+				action = input()
 
 def monster_attack_function():
 	global hp
