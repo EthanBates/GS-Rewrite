@@ -3,9 +3,7 @@ import random
 hp = 100
 score = 0
 
-#////////////////////////////////
-#
-#         DEFINITIONS          #
+#////////# DEFINITIONS #////////#
 
 def player_attack_function():
 	global mhp, score
@@ -13,7 +11,7 @@ def player_attack_function():
 	print("The", monster, "now has", mhp, "HP remaining!")
 	if mhp < 1: # Checks if monster is alive first.
 		score = score + 1
-		print("Nice! You slayed the", monster+"!")
+		print("Nice! You slayed the", monster+"!\n")
 	if mhp > 0: # If monster is still alive, these are avaliable.
 		print("The", monster, "attacks you!")
 		monster_attack_function()
@@ -27,6 +25,9 @@ def player_attack_function():
 			elif(action != "atk" and action != "run"):
 				print("Invalid action. Please retry.")
 				action = input()
+				while(action != "atk" and action != "run"):
+					print("Invalid action. Please retry.")
+					action = input()
 
 def monster_attack_function():
 	global hp
@@ -44,7 +45,6 @@ def run_function():
 	print("\n - YOU RAN -")
 	print("You defeated", score, "monsters over your time in the dungeon.")
 
-#
 #///////////////////////////////
 
 while(hp > 0):
@@ -62,4 +62,4 @@ while(hp > 0):
 			run_function()
 		elif(action != "atk" and action != "run"):
 			print("Invalid action. Please retry.")
-			break
+			action = input()
