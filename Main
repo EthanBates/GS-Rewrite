@@ -19,17 +19,17 @@ def player_attack_function():	# Player Attack Function
 		print("The", monster, "attacks you for", monster_damage, "HP!")
 		monster_attack_function()
 		if hp > 0:
-			print("What do you do now? [atk] [run] [esc]")
+			print("What do you do now?\n[atk] [esc] | [run]")
 			action = input()
-			if(action == "atk"):   # You need to put the options for each action in this attack, or else it will repeat.
+			if(action == "atk"):   # You need to put each action here, or else it will repeat.
 				mhp = mhp - player_damage
 				print("\nYou hit the", monster, "for", player_damage, "damage!")
 				player_attack_function()
 			if(action == "run"):
 				run_function()
-			if(action == "die"):
+			elif(action == "die"):
 				dev_cheat_die()
-			if(action == "esc"):
+			elif(action == "esc"):
 				escape_function()
 			elif(action != "atk" and action != "run" and action != "die" and action != "esc"):
 				print("Invalid action. Please retry.")
@@ -77,10 +77,10 @@ def escape_function(): # Escape Function
 		gold = gold - 5
 		mhp = mhp - 999
 		print("You escaped without harm! But you accidentally dropped 5 gold!\n")
-	else:
+	elif(gold < 5):
 		hp = hp - 5
-		mhp = mhp + 5 # Player automatically attacks if they fail the escape.
-		print("You couldn't escape! You took 5 damage!\n")
+		print("You couldn't escape and took 5 damage! You have", hp, "HP remaining!\n")
+		player_attack_function()
 
 #/////////////////////////////////////////////////END-OF-DEFINITIONS//////#
 
@@ -94,7 +94,7 @@ while(hp > 0): # This is the start of every single battle.
 	monster_damage = random.randint(2,7)
 	gold_dropped = random.randint(1, 10)
 
-	print("A", monster, "appears! It has", mhp, "HP! What will you do? [atk] [run] [esc]")
+	print("A", monster, "appears! It has", mhp, "HP! What will you do?\n[atk] [esc] | [run]")
 	action = input()
 	while(mhp > 0 and hp > 0):
 		if(action == "atk"): # Damage is dealt here, so it doesnt repeat for nonlethal actions. Very important!
