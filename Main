@@ -6,21 +6,24 @@ gold = 0
 
 #////////# DEFINITIONS #////////#
 def player_attack_function():	# Player Attack Function
-	global mhp, score, gold_mon_dropped
-	mhp = mhp - 5
+	global mhp, score, gold_mon_dropped, monster_damage
+	player_damage = random.randint(3,7)
 	print("The", monster, "now has", mhp, "HP remaining!")
 	if mhp < 1: # Checks if monster is alive first.
 		score = score + 1
 		gold_system()
-		print("Nice! You slayed the", monster+"!")
+		print("Nice! You slayed the", monster, "!")
 		print("It dropped", gold_dropped, "gold!\n")
 	if mhp > 0: # If monster is still alive, these are avaliable.
-		print("The", monster, "attacks you!")
+		monster_damage = random.randint(2,7)
+		print("The", monster, "attacks you for", monster_damage, "HP!")
 		monster_attack_function()
 		if hp > 0:
-			print("What do you do now? [atk] [run]")
+			print("What do you do now? [atk] [run] [esc]")
 			action = input()
 			if(action == "atk"):   # You need to put the options for each action in this attack, or else it will repeat.
+				mhp = mhp - player_damage
+				print("\nYou hit the", monster, "for", player_damage, "damage!")
 				player_attack_function()
 			if(action == "run"):
 				run_function()
@@ -37,11 +40,11 @@ def player_attack_function():	# Player Attack Function
 
 def monster_attack_function():	# Monster Attack Function
 	global hp, score, mhp, gold
-	hp = hp - 5
+	hp = hp - monster_damage
 	if hp <= 0:
 		player_death()
 	else:
-		print("You got attacked! You have", hp, "HP left!\n")
+		print("You have", hp, "HP left!\n")
 
 def run_function():	# Run Function
 	global hp, score, mhp, gold
@@ -86,13 +89,17 @@ while(hp > 0): # This is the start of every single battle.
 	mon_list = ["Goblin", "Bandit", "Wolf", "Zombie"]
 	mon_randomizer = random.SystemRandom()
 	monster = mon_randomizer.choice(mon_list)
-
-	print("A", monster, "appears! What will you do? [atk] [run]")
-	mhp = 15
+	mhp = random.randint(10, 20)
+	player_damage = random.randint(3,7)
+	monster_damage = random.randint(2,7)
 	gold_dropped = random.randint(1, 10)
+
+	print("A", monster, "appears! It has", mhp, "HP! What will you do? [atk] [run] [esc]")
 	action = input()
 	while(mhp > 0 and hp > 0):
-		if(action == "atk"):
+		if(action == "atk"): # Damage is dealt here, so it doesnt repeat for nonlethal actions. Very important!
+			mhp = mhp - player_damage
+			print("\nYou hit the", monster, "for", player_damage, "damage!")
 			player_attack_function()
 		if(action == "run"):
 			run_function()
