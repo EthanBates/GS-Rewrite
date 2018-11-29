@@ -2,16 +2,18 @@ import random
 
 hp = 100
 score = 0
+gold = 0
 
 #////////# DEFINITIONS #////////#
-
 def player_attack_function():
-	global mhp, score
+	global mhp, score, gold_mon_dropped
 	mhp = mhp - 5
 	print("The", monster, "now has", mhp, "HP remaining!")
 	if mhp < 1: # Checks if monster is alive first.
 		score = score + 1
-		print("Nice! You slayed the", monster+"!\n")
+		gold_system()
+		print("Nice! You slayed the", monster+"!")
+		print("It dropped", gold_dropped, "gold!\n")
 	if mhp > 0: # If monster is still alive, these are avaliable.
 		print("The", monster, "attacks you!")
 		monster_attack_function()
@@ -20,7 +22,7 @@ def player_attack_function():
 			action = input()
 			if(action == "atk"):   # You need to put the options for each action in this attack, or else it will repeat.
 				player_attack_function()
-			elif(action == "run"):
+			if(action == "run"):
 				run_function()
 			elif(action != "atk" and action != "run"):
 				print("Invalid action. Please retry.")
@@ -44,6 +46,11 @@ def run_function():
 	mhp = 15
 	print("\n - YOU RAN -")
 	print("You defeated", score, "monsters over your time in the dungeon.")
+	print("You collected", gold, "gold to spend later!")
+
+def gold_system():
+	global gold
+	gold = gold + gold_dropped
 
 #///////////////////////////////
 
@@ -54,6 +61,7 @@ while(hp > 0):
 
 	print("A", monster, "appears! What will you do? [atk] [run]")
 	mhp = 15
+	gold_dropped = random.randint(1, 10)
 	action = input()
 	while(mhp > 0 and hp > 0):
 		if(action == "atk"):
