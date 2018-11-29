@@ -26,10 +26,12 @@ def player_attack_function():	# Player Attack Function
 				run_function()
 			if(action == "die"):
 				dev_cheat_die()
-			elif(action != "atk" and action != "run" and action != "die"):
+			if(action == "esc"):
+				escape_function()
+			elif(action != "atk" and action != "run" and action != "die" and action != "esc"):
 				print("Invalid action. Please retry.")
 				action = input()
-				while(action != "atk" and action != "run" and action != "die"):
+				while(action != "atk" and action != "run" and action != "die" and action != "esc"):
 					print("Invalid action. Please retry.")
 					action = input()
 
@@ -66,9 +68,21 @@ def dev_cheat_die():	# Instant Death Function
 	player_death()
 	print("You used the developer death cheat. Epic!")
 
-#///////////////////////////////
+def escape_function(): # Escape Function
+	global mhp, hp, gold
+	if(gold >= 5):
+		gold = gold - 5
+		mhp = mhp - 999
+		print("You escaped without harm! But you accidentally dropped 5 gold!\n")
+	else:
+		hp = hp - 5
+		mhp = mhp + 5 # Player automatically attacks if they fail the escape.
+		print("You couldn't escape! You took 5 damage!\n")
 
-while(hp > 0):
+#/////////////////////////////////////////////////END-OF-DEFINITIONS//////#
+
+
+while(hp > 0): # This is the start of every single battle.
 	mon_list = ["Goblin", "Bandit", "Wolf", "Zombie"]
 	mon_randomizer = random.SystemRandom()
 	monster = mon_randomizer.choice(mon_list)
@@ -84,6 +98,8 @@ while(hp > 0):
 			run_function()
 		if(action == "die"):
 			dev_cheat_die()
-		elif(action != "atk" and action != "run" and action != "die"):
+		if(action == "esc"):
+			escape_function()
+		elif(action != "atk" and action != "run" and action != "die" and action != "esc"):
 			print("Invalid action. Please retry.")
 			action = input()
