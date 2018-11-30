@@ -1,5 +1,6 @@
 import random
 
+print("Test Branch!")
 hp = 100
 score = 0
 gold = 0
