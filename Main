@@ -1,19 +1,25 @@
 import random
 
+# Starting values.
 hp = 100
 score = 0
 gold = 0
 
+action_list = ['atk', 'esc', 'run', 'die'] # Used for invalid inputs
+
 #////////# DEFINITIONS #////////#
 def player_attack_function():	# Player Attack Function
+	# This is basically the entire battle sequence.
 	global mhp, score, gold_mon_dropped, monster_damage
 	player_damage = random.randint(3,7)
 	print("The", monster, "now has", mhp, "HP remaining!")
-	if mhp < 1: # Checks if monster is alive first.
+
+	if mhp < 1: # If the monster has died.
 		score = score + 1
 		gold_system()
 		print("Nice! You slayed the", monster, "!")
 		print("It dropped", gold_dropped, "gold!\n")
+
 	if mhp > 0: # If monster is still alive, these are avaliable.
 		monster_damage = random.randint(2,7)
 		print("The", monster, "attacks you for", monster_damage, "HP!")
@@ -27,14 +33,14 @@ def player_attack_function():	# Player Attack Function
 				player_attack_function()
 			if(action == "run"):
 				run_function()
-			elif(action == "die"):
+			if(action == "die"):
 				dev_cheat_die()
-			elif(action == "esc"):
+			if(action == "esc"):
 				escape_function()
-			elif(action != "atk" and action != "run" and action != "die" and action != "esc"):
+			if(action not in action_list):
 				print("Invalid action. Please retry.")
 				action = input()
-				while(action != "atk" and action != "run" and action != "die" and action != "esc"):
+				while(action not in action_list):
 					print("Invalid action. Please retry.")
 					action = input()
 
@@ -47,8 +53,8 @@ def monster_attack_function():	# Monster Attack Function
 		print("You have", hp, "HP left!\n")
 
 def run_function():	# Run Function
-	global hp, score, mhp, gold
-	hp = 0
+	global hp, score, mhp, gold, action
+	hp = hp - 999
 	mhp = 15
 	print("\n - YOU RAN -")
 	print("You defeated", score, "monsters over your time in the dungeon.")
@@ -65,7 +71,7 @@ def player_death():	# Player Death System
 	print("You collected", gold, "gold that will go to waste.")
 
 def dev_cheat_die():	# Instant Death Function
-	global hp, score, mhp, gold
+	global hp, score, mhp, gold, action
 	hp = 0
 	mhp = 15
 	player_death()
@@ -73,22 +79,23 @@ def dev_cheat_die():	# Instant Death Function
 
 def escape_function(): # Escape Function
 	global mhp, hp, gold
-	if(gold >= 5):
+	if(gold >= 5): # If the player can escape.
 		gold = gold - 5
 		mhp = mhp - 999
 		print("You escaped without harm! But you accidentally dropped 5 gold!\n")
-	elif(gold < 5):
+	elif(gold < 5): # If the player cannot escape.
 		hp = hp - 5
 		print("You couldn't escape and took 5 damage! You have", hp, "HP remaining!\n")
 		player_attack_function()
 
-#/////////////////////////////////////////////////END-OF-DEFINITIONS//////#
+#///////////////////////END-OF-DEFINITIONS//////#
 
 
 while(hp > 0): # This is the start of every single battle.
 	mon_list = ["Goblin", "Bandit", "Wolf", "Zombie"]
 	mon_randomizer = random.SystemRandom()
 	monster = mon_randomizer.choice(mon_list)
+
 	mhp = random.randint(10, 20)
 	player_damage = random.randint(3,7)
 	monster_damage = random.randint(2,7)
@@ -107,6 +114,6 @@ while(hp > 0): # This is the start of every single battle.
 			dev_cheat_die()
 		if(action == "esc"):
 			escape_function()
-		elif(action != "atk" and action != "run" and action != "die" and action != "esc"):
+		if(action not in action_list):
 			print("Invalid action. Please retry.")
 			action = input()
