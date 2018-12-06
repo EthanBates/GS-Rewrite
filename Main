@@ -1,113 +1,225 @@
 import random
 
-print("Test Branch!")
+# Starting values below.
+# This is the players "stats" at the game start.
 hp = 100
+max_hp = 100
+player_weapon = "WoodenSword"
+player_armor = "None"
+w_min = 1
+w_max = 2
+
+# These are just variables for how much a player owns.
 score = 0
-gold = 0
+gold = 10
+pots = 1
+town_chance = 1
 
-#////////# DEFINITIONS #////////#
-def player_attack_function():	# Player Attack Function
-	global mhp, score, gold_mon_dropped, monster_damage
-	player_damage = random.randint(3,7)
-	print("The", monster, "now has", mhp, "HP remaining!")
-	if mhp < 1: # Checks if monster is alive first.
-		score = score + 1
-		gold_system()
-		print("Nice! You slayed the", monster, "!")
-		print("It dropped", gold_dropped, "gold!\n")
-	if mhp > 0: # If monster is still alive, these are avaliable.
-		monster_damage = random.randint(2,7)
-		print("The", monster, "attacks you for", monster_damage, "HP!")
-		monster_attack_function()
-		if hp > 0:
-			print("What do you do now?\n[atk] [esc] | [run]")
-			action = input()
-			if(action == "atk"):   # You need to put each action here, or else it will repeat.
-				mhp = mhp - player_damage
-				print("\nYou hit the", monster, "for", player_damage, "damage!")
-				player_attack_function()
-			if(action == "run"):
-				run_function()
-			elif(action == "die"):
-				dev_cheat_die()
-			elif(action == "esc"):
-				escape_function()
-			elif(action != "atk" and action != "run" and action != "die" and action != "esc"):
-				print("Invalid action. Please retry.")
-				action = input()
-				while(action != "atk" and action != "run" and action != "die" and action != "esc"):
-					print("Invalid action. Please retry.")
-					action = input()
-
-def monster_attack_function():	# Monster Attack Function
-	global hp, score, mhp, gold
-	hp = hp - monster_damage
-	if hp <= 0:
-		player_death()
-	else:
-		print("You have", hp, "HP left!\n")
-
-def run_function():	# Run Function
-	global hp, score, mhp, gold
-	hp = 0
-	mhp = 15
-	print("\n - YOU RAN -")
-	print("You defeated", score, "monsters over your time in the dungeon.")
-	print("You collected", gold, "gold to spend later!")
-
-def gold_system():	# Gold System
-	global gold
-	gold = gold + gold_dropped
-
-def player_death():	# Player Death System
-	global hp, score, mhp, gold
-	print("\n- YOU DIED -")
-	print("You defeated", score, "monsters over your lifetime.")
-	print("You collected", gold, "gold that will go to waste.")
-
-def dev_cheat_die():	# Instant Death Function
-	global hp, score, mhp, gold
-	hp = 0
-	mhp = 15
-	player_death()
-	print("You used the developer death cheat. Epic!")
-
-def escape_function(): # Escape Function
-	global mhp, hp, gold
-	if(gold >= 5):
-		gold = gold - 5
-		mhp = mhp - 999
-		print("You escaped without harm! But you accidentally dropped 5 gold!\n")
-	elif(gold < 5):
-		hp = hp - 5
-		print("You couldn't escape and took 5 damage! You have", hp, "HP remaining!\n")
-		player_attack_function()
-
-#/////////////////////////////////////////////////END-OF-DEFINITIONS//////#
+action_list = ['atk', 'esc', 'run', 'die', 'inv']  # Used for invalid inputs.
+inv_action_list = ['drink', 'back']
+town_action_list = ['sleep', 'shop', 'leave']
 
 
-while(hp > 0): # This is the start of every single battle.
-	mon_list = ["Goblin", "Bandit", "Wolf", "Zombie"]
-	mon_randomizer = random.SystemRandom()
-	monster = mon_randomizer.choice(mon_list)
-	mhp = random.randint(10, 20)
-	player_damage = random.randint(3,7)
-	monster_damage = random.randint(2,7)
-	gold_dropped = random.randint(1, 10)
+# ////////# DEFINITIONS #////////#
+def player_attack_function():  # Player Attack Function
+    # This is basically the entire battle sequence.
+    global mhp, score, monster_damage
+    player_damage = random.randint(w_min, w_max)
+    print("The", monster, "now has", mhp, "HP remaining!")
+    if mhp < 1:  # If the monster has died.
+        monster_death_function()
+    if mhp > 0:  # If monster is still alive, these are avaliable.
+        monster_damage = random.randint(2, 7)
+        print("The", monster, "attacks you for", monster_damage, "HP!")
+        monster_attack_function()
+        if hp > 0:
+            print("What do you do now?\n[atk] [esc] [inv] | [run]")
+            action = input()
+            if (action == "atk"):  # You need to put each action here, or else it will repeat.
+                mhp = mhp - player_damage
+                print("\nYou hit the", monster, "for", player_damage, "damage!")
+                player_attack_function()
+            if (action == "run"):
+                run_function()
+            if (action == "die"):
+                dev_cheat_die()
+            if (action == "esc"):
+                escape_function()
+            if (action == "inv"):
+                inventory_function()
+            if (action not in action_list):
+                print("Invalid action. Please retry.")
+                action = input()
+                while (action not in action_list):
+                    print("Invalid action. Please retry.")
+                    action = input()
 
-	print("A", monster, "appears! It has", mhp, "HP! What will you do?\n[atk] [esc] | [run]")
-	action = input()
-	while(mhp > 0 and hp > 0):
-		if(action == "atk"): # Damage is dealt here, so it doesnt repeat for nonlethal actions. Very important!
-			mhp = mhp - player_damage
-			print("\nYou hit the", monster, "for", player_damage, "damage!")
-			player_attack_function()
-		if(action == "run"):
-			run_function()
-		if(action == "die"):
-			dev_cheat_die()
-		if(action == "esc"):
-			escape_function()
-		elif(action != "atk" and action != "run" and action != "die" and action != "esc"):
-			print("Invalid action. Please retry.")
-			action = input()
+
+def monster_death_function():
+    global score, gold_dropped, monster, pots, player_weapon
+    score = score + 1
+    gold_system()
+    print("Nice! You slayed the", monster + "!")
+    print("It dropped", gold_dropped, "gold!\n")
+    if (monster == "Bandit"):
+        pots = pots + 1
+        print("You also find a potion on the", monster + "!")
+        print("You now have", pots, "potion(s)!")
+    if (monster == "Goblin"):
+        player_weapon = "RustyKnife"
+        gear_stats()
+        print("You found a Rusty Knife! Your maximum damage is now", w_max, "!")
+
+
+def monster_attack_function():  # Monster Attack Function
+    global hp, score, mhp, gold
+    hp = hp - monster_damage
+    if hp <= 0:
+        player_death()
+    else:
+        print("You have", hp, "HP left!\n")
+
+
+def run_function():  # Run Function
+    global hp, score, mhp, gold, pots
+    hp = hp - 999
+    mhp = 15
+    print("\n - YOU RAN -")
+    print("You defeated", score, "monsters over your time in the dungeon.")
+    print("You collected", gold, "gold to spend later!")
+    print("You picked up", pots, "potion(s) you can sell!")
+
+
+def gold_system():  # Gold System
+    global gold
+    gold = gold + gold_dropped
+
+
+def player_death():  # Player Death System
+    global hp, score, mhp, gold
+    print("\n- YOU DIED -")
+    print("You defeated", score, "monsters over your lifetime.")
+    print("You collected", gold, "gold that will go to waste.")
+    print("You dropped", pots, "unused potion(s)!")
+
+
+def dev_cheat_die():  # Instant Death Function
+    global hp, score, mhp, gold, action
+    hp = 0
+    mhp = 15
+    player_death()
+    print("You used the developer death cheat. Epic!")
+
+
+def escape_function():  # Escape Function
+    global mhp, hp, gold, monster, town_chance
+    town_chance = random.randint(0, 100)
+    if (gold >= 5):  # If the player can escape.
+        gold = gold - 5
+        mhp = mhp - 999
+        print("You escaped without harm! But you accidentally dropped 5 gold!\n")
+        if (town_chance > 74):
+            town_encounter()
+    elif (gold < 5):  # If the player cannot escape.
+        print("You couldn't escape and the", monster, "approaches you!")
+        player_attack_function()
+
+
+def inventory_function():
+    global hp, score, gold, pots
+    print("\n - Your Inventory -")
+    print("Gold -", gold)
+    print("Potions -", pots)
+    print("Bones -", score)
+    print("\nWhat do you want to do?")
+    print("[drink] | [back]\n")
+    inv_action = input()
+    if (inv_action == "drink"):
+        if (pots > 0):
+            hp = hp + 10
+            pots = pots - 1
+            print("You drank a potion. You now have", hp, "HP!")
+            inventory_function()
+        elif (pots == 0):
+            print("You have no potions to drink.")
+            inventory_function()
+    if (inv_action == "back"):
+        battle_start()
+    if (inv_action not in inv_action_list):
+        print("Invalid action. Please retry.")
+        inv_action = input()
+
+
+def battle_start():
+    global monster, mhp, player_damage, action
+    print("\nA", monster, "appears! It has", mhp, "HP! What will you do?\n[atk] [esc] [inv] | [run]")
+    action = input()
+    while (mhp > 0 and hp > 0):
+        if (
+                action == "atk" and action in action_list):  # Damage is dealt here, so it doesnt repeat for nonlethal actions. Very important!
+            mhp = mhp - player_damage
+            print("\nYou hit the", monster, "for", player_damage, "damage!")
+            player_attack_function()
+        if (action == "run"):
+            run_function()
+        if (action == "die"):
+            dev_cheat_die()
+        if (action == "esc"):
+            escape_function()
+        if (action == "inv"):
+            inventory_function()
+        if (action not in action_list):
+            print("Invalid action. Please retry.")
+            action = input()
+
+
+def gear_stats():
+    global player_weapon, player_armor, hp_max, w_min, w_max
+    # Weapon Stats!
+    if (player_weapon == "WoodenSword"):
+        w_min = 2
+        w_max = 6
+    if (player_weapon == "RustyKnife"):
+        w_min = 2
+        w_max = 7
+    # Armor Stats!
+    if (player_armor == "None"):
+        max_hp = 100
+
+
+def town_encounter():
+    print("You come across a Town! Finally!")
+    print("What would you like to do here?\n [sleep] [shop] | [leave]")
+    town_action = input()
+    if (town_action == "sleep"):
+        print("sleep thing")
+        town_encounter()
+    if (town_action == "shop"):
+        print("shop thing")
+        town_encounter()
+    if (town_action == "leave"):
+        starting_variables()
+        battle_start()
+    if (town_action not in town_action_list):
+        print("Invalid action. Please retry.")
+        town_action = input()
+
+def starting_variables():
+    global mhp, monster, player_damage, monster_damage, gold_dropped
+    # This is the monster randomizer
+    mon_list = ["Goblin", "Bandit", "Wolf", "Zombie"]
+    mon_randomizer = random.SystemRandom()
+    monster = mon_randomizer.choice(mon_list)
+    gear_stats()  # Called so the players stats get updated.
+    # These are just some basic variables.
+    mhp = random.randint(10, 20)
+    player_damage = random.randint(w_min, w_max)
+    monster_damage = random.randint(2, 7)
+    gold_dropped = random.randint(1, 10)
+
+# ///////////////////////END-OF-DEFINITIONS//////#
+
+
+while (hp > 0):  # This is the start of every single battle.
+    starting_variables()
+    battle_start()
